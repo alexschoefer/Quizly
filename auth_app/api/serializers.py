@@ -9,34 +9,32 @@ class RegistrationSerializer(serializers.ModelSerializer):
     """
     Serializer for user registration.
     """
-    confirm_password = serializers.CharField(write_only=True)
+    confirmed_password = serializers.CharField(write_only=True)
 
     class Meta:
         model = User
-        fields = ('username', 'password', 'confirm_password', 'email')
+        fields = ('username', 'password', 'confirmed_password', 'email')
         extra_kwargs = {
             'password': {'write_only': True},
             'email': {'required': True}
         }
 
-    def create(self, validated_data):
-        """"
-        Create and return a new user instance, given the validated data.
-        """
-        user = User.objects.create_user(
-            username=validated_data['username'],
-            password=validated_data['password'],
-            email=validated_data['email']
-        )
-        return user
+    def save(self):
+        """Create a new user instance after validating the data."""
+        pw = self.validated_data['password']
+        account = User(email=self.validated_data['email'], username=self.validated_data['username'])
+        account.set_password(pw)
+        account.save()
+        return account
+        
     
     def validate(self, data):
         """
         Validate that the password and confirm_password fields match.
         """
         password = data.get('password')
-        confirm_password = data.get('confirm_password')
-        if password != confirm_password:
+        confirmed_password = data.get('confirmed_password')
+        if password != confirmed_password:
             raise serializers.ValidationError("Passwords do not match.")
         return data
     
@@ -62,9 +60,12 @@ class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
     This can be extended to include additional user information in the token response.
     """
     def validate(self, attrs):
+        """
+        Validate the user credentials and return the token along with user information.
+        """
         data = super().validate(attrs)
         data.update({'user': {
-            'user_id': self.user.id,
+            'id': self.user.id,
             'username': self.user.username,
             'email': self.user.email
         }})
