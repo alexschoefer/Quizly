@@ -142,4 +142,4 @@ SIMPLE_JWT = {
 
 STATIC_URL = 'static/'
 
-GEMINI_API_KEY='AIzaSyDNLmzJcrnxIKl8cxw_bfJSE2P-vWbNpwU'
+
