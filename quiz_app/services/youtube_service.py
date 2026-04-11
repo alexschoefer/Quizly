@@ -2,6 +2,7 @@ import re
 from urllib.parse import urlparse, parse_qs
 import os
 import yt_dlp
+import uuid
 
 def extract_youtube_video_id(url: str) -> str:
     """
@@ -59,7 +60,7 @@ def download_audio(url: str, output_dir: str = "tmp") -> str:
 
     ydl_opts = {
         "format": "bestaudio/best",
-        "outtmpl": f"{output_dir}/%(id)s.%(ext)s",
+        "outtmpl": f"{output_dir}/%(id)s_{uuid.uuid4()}.%(ext)s",
         'postprocessors': [{
             'key': 'FFmpegExtractAudio',
             'preferredcodec': 'mp3',

@@ -7,24 +7,43 @@ from .serializers import QuizSerializer, CreateQuizSerializer
 from .permissions import IsOwnerOfTheQuiz
 from quiz_app.services.youtube_service import normalize_youtube_url, build_canonical_youtube_url, download_audio
 from quiz_app.services.audio_transcription_service import transcribe_audio
+from celery import shared_task
+from django.core.exceptions import ObjectDoesNotExist
+import os
 
-
+@shared_task
 def process_create_quiz_audio(quiz_id):
-        """
-        Background task to process the audio of a quiz after it has been created.
-        This function downloads the audio from the quiz's video URL, transcribes it, and updates the quiz with the transcript.
-        """
+    """
+    Asynchronous task to process the audio of a quiz's YouTube video, transcribe it, and update the quiz with the transcript and status.
+    """
+    try:
         quiz = Quiz.objects.get(id=quiz_id)
+    except ObjectDoesNotExist:
+        return
 
+    audio_path = None
+
+    try:
         audio_path = download_audio(quiz.video_url)
         transcript = transcribe_audio(audio_path)
 
         quiz.transcript = transcript
         quiz.status = "done"
+
+    except Exception as e:
+        quiz.status = "failed"
+        quiz.transcript = str(e)
+
+    finally:
         quiz.save()
 
+        if audio_path and os.path.exists(audio_path):
+            os.remove(audio_path)
+
 class QuizListCreateView(generics.ListCreateAPIView):
-    
+    """
+    API view to handle listing and creating quizzes. Only authenticated users can access this view.
+    """
     permission_classes = [IsAuthenticated]
 
     def get_serializer_class(self):
