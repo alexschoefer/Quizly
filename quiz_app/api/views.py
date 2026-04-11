@@ -7,6 +7,7 @@ from .serializers import QuizSerializer, CreateQuizSerializer
 from .permissions import IsOwnerOfTheQuiz
 from quiz_app.services.youtube_service import normalize_youtube_url, build_canonical_youtube_url, download_audio
 from quiz_app.services.audio_transcription_service import transcribe_audio
+from quiz_app.services.quiz_gemini_service import generate_quiz_from_transcript, validate_quiz_data
 from celery import shared_task
 from django.core.exceptions import ObjectDoesNotExist
 import os
@@ -26,9 +27,25 @@ def process_create_quiz_audio(quiz_id):
     try:
         audio_path = download_audio(quiz.video_url)
         transcript = transcribe_audio(audio_path)
-
+        quiz_data = generate_quiz_from_transcript(transcript)
+        validate_quiz_data(quiz_data)
+        quiz.title = quiz_data["title"]
+        quiz.description = quiz_data["description"]
         quiz.transcript = transcript
         quiz.status = "done"
+        quiz.save()
+
+        questions = [
+            Question(
+                quiz=quiz,
+                question_title=q["question_title"],
+                question_options=q["question_options"],
+                answer=q["answer"],
+            )
+            for q in quiz_data["questions"]
+        ]
+
+        Question.objects.bulk_create(questions)
 
     except Exception as e:
         quiz.status = "failed"

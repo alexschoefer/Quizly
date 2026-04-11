@@ -32,7 +32,46 @@ QUIZ_GEMINI_PROMPT = """
 
     """
 
+def _check_api_key():
+    """Checks if the Gemini API key is set in the Django settings."""
+    if not settings.GEMINI_API_KEY:
+        raise ValueError("GEMINI_API_KEY is not set in Django settings.")
+
+def _create_prompt(transcript):
+    """
+    Combines the predefined quiz generation prompt with the provided transcript to create the final prompt for the Gemini API.
+    The transcript is appended to the quiz generation prompt, separated by two newlines for clarity.
+    """
+    return QUIZ_GEMINI_PROMPT + "\n\n" + transcript
+
 def clean_llm_output(text):
     """Removes unwanted code block delimiters and prepares the text for JSON processing."""
     text = re.sub(r"```json|```", "", text).strip()
     return json.loads(text)
+
+def generate_quiz_from_transcript(transcript):
+    """
+    Generates a quiz based on the provided transcript using the Gemini API.
+    Returns a dictionary containing the quiz data.
+    """
+    client = _check_api_key()
+
+    response = client.chat.complete(
+        model="gemini-3-flash-preview",
+        content = _create_prompt(transcript)
+    )
+
+    return clean_llm_output(response.text)
+
+def validate_quiz_data(data):
+    """
+    Validates the structure and content of the quiz data to ensure it meets the specified requirements.
+    """
+    if len(data.get("questions", [])) != 10:
+        raise ValueError("Invalid number of questions")
+
+    for q in data["questions"]:
+        if len(q["question_options"]) != 4:
+            raise ValueError("Invalid number of options")
+        if q["answer"] not in q["question_options"]:
+            raise ValueError("Answer not in options")
