@@ -17,12 +17,12 @@ import os
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
-print("ENV KEY LOADED:", os.getenv("GEMINI_API_KEY"))
+# print("ENV KEY LOADED:", os.getenv("GEMINI_API_KEY"))
 
 """Load environment variables from the .env file located at the base directory of the project."""
 load_dotenv(BASE_DIR / ".env")
-print("ENV PATH EXISTS:", (BASE_DIR / ".env").exists())
-print("KEY:", os.getenv("GEMINI_API_KEY"))
+# print("ENV PATH EXISTS:", (BASE_DIR / ".env").exists())
+# print("KEY:", os.getenv("GEMINI_API_KEY"))
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/6.0/howto/deployment/checklist/
@@ -47,6 +47,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'rest_framework',
     'rest_framework_simplejwt',
+    'rest_framework_simplejwt.token_blacklist',
     'auth_app',
     'quiz_app',
     'corsheaders',

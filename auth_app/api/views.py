@@ -71,11 +71,22 @@ class LogoutView(APIView):
 
     def post(self, request, *args, **kwargs):
         """
-        Handle user logout by deleting the access and refresh tokens from the cookies.
+        Override the post method to delete the JWT tokens from the cookies and blacklist the refresh token if it exists.
         """
-        response = Response({"detail": "Log-Out successfully! All Tokens will be deleted. Refresh token is now invalid."}, status=status.HTTP_200_OK)
-        response.delete_cookie('access_token')
-        response.delete_cookie('refresh_token')
+        refresh = request.COOKIES.get("refresh_token")
+
+        response = Response({"detail": "Logged out"}, status=200)
+
+        response.delete_cookie("access_token")
+        response.delete_cookie("refresh_token")
+
+        if refresh:
+            try:
+                token = RefreshToken(refresh)
+                token.blacklist()
+            except:
+                pass
+
         return response
     
 class CustomTokenRefreshView(TokenRefreshView):
