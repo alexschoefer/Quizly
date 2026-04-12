@@ -17,6 +17,7 @@ def process_create_quiz_audio(quiz_id):
     """
     Asynchronous task to process the audio of a quiz's YouTube video, transcribe it, and update the quiz with the transcript and status.
     """
+    print("TASK STARTED") 
     try:
         quiz = Quiz.objects.get(id=quiz_id)
     except ObjectDoesNotExist:
@@ -26,8 +27,11 @@ def process_create_quiz_audio(quiz_id):
 
     try:
         audio_path = download_audio(quiz.video_url)
+        print("DOWNLOADED AUDIO")
         transcript = transcribe_audio(audio_path)
+        print("TRANSCRIBED")
         quiz_data = generate_quiz_from_transcript(transcript)
+        print("GEMINI DONE")
         validate_quiz_data(quiz_data)
         quiz.title = quiz_data["title"]
         quiz.description = quiz_data["description"]
@@ -48,6 +52,7 @@ def process_create_quiz_audio(quiz_id):
         Question.objects.bulk_create(questions)
 
     except Exception as e:
+        print("ERROR:", str(e))
         quiz.status = "failed"
         quiz.transcript = str(e)
 
@@ -93,8 +98,8 @@ class QuizListCreateView(generics.ListCreateAPIView):
                 status="processing"
             )
 
-            # process_create_quiz_audio.delay(quiz.id)
-            process_create_quiz_audio(quiz.id)
+            process_create_quiz_audio.delay(quiz.id)
+            #process_create_quiz_audio(quiz.id)
 
         else:
             serializer.save(user=self.request.user)

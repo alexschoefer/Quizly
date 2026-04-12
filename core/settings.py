@@ -15,11 +15,14 @@ from datetime import timedelta
 from dotenv import load_dotenv
 import os
 
-load_dotenv()
-
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
+print("ENV KEY LOADED:", os.getenv("GEMINI_API_KEY"))
 
+"""Load environment variables from the .env file located at the base directory of the project."""
+load_dotenv(BASE_DIR / ".env")
+print("ENV PATH EXISTS:", (BASE_DIR / ".env").exists())
+print("KEY:", os.getenv("GEMINI_API_KEY"))
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/6.0/howto/deployment/checklist/
@@ -147,3 +150,7 @@ STATIC_URL = 'static/'
 
 """Default primary key field type"""
 GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
+
+"""Celery configuration for asynchronous task processing. The broker and result backend are both set to use Redis running on localhost at port 6379, using database 0."""
+CELERY_BROKER_URL = "redis://localhost:6379/0"
+CELERY_RESULT_BACKEND = "redis://localhost:6379/0"
