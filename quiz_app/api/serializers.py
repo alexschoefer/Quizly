@@ -23,5 +23,24 @@ class QuizSerializer(serializers.ModelSerializer):
         read_only_fields = ['created_at', 'updated_at']
 
 class CreateQuizSerializer(serializers.Serializer):
-
+    """
+    Serializer for creating a new Quiz instance, validating the input data for the title, description, and video URL fields.
+    """
     url = serializers.URLField(required=False, allow_blank=True)
+
+class UpdateQuizSerializer(serializers.ModelSerializer):
+    """
+    Serializer for updating Quiz instances, allowing partial updates of the title and description fields.
+    """
+    class Meta:
+        model = Quiz
+        fields = ['title', 'description']
+        read_only_fields = ['created_at', 'updated_at']
+        extra_kwargs = {
+            'title': {'required': False},
+            'description': {'required': False},
+        }
+
+
+
+
