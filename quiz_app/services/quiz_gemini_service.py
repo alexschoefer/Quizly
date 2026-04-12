@@ -32,11 +32,6 @@ QUIZ_GEMINI_PROMPT = """
 
     """
 
-def _check_api_key():
-    """Checks if the Gemini API key is set in the Django settings."""
-    if not settings.GEMINI_API_KEY:
-        raise ValueError("GEMINI_API_KEY is not set in Django settings.")
-
 def _create_prompt(transcript):
     """
     Combines the predefined quiz generation prompt with the provided transcript to create the final prompt for the Gemini API.
@@ -52,13 +47,15 @@ def clean_llm_output(text):
 def generate_quiz_from_transcript(transcript):
     """
     Generates a quiz based on the provided transcript using the Gemini API.
-    Returns a dictionary containing the quiz data.
     """
-    client = _check_api_key()
+    if not settings.GEMINI_API_KEY:
+        raise ValueError("GEMINI_API_KEY is not set")
 
-    response = client.chat.complete(
+    client = genai.Client(api_key=settings.GEMINI_API_KEY)
+
+    response = client.models.generate_content(
         model="gemini-3-flash-preview",
-        content = _create_prompt(transcript)
+        contents=_create_prompt(transcript)
     )
 
     return clean_llm_output(response.text)

@@ -87,13 +87,14 @@ class QuizListCreateView(generics.ListCreateAPIView):
         if video_url:
             normalized_url = normalize_youtube_url(video_url)
 
-            quiz = serializer.save(
+            quiz = Quiz.objects.create(
                 user=self.request.user,
                 video_url=normalized_url,
                 status="processing"
             )
 
-            process_create_quiz_audio.delay(quiz.id)
+            # process_create_quiz_audio.delay(quiz.id)
+            process_create_quiz_audio(quiz.id)
 
         else:
             serializer.save(user=self.request.user)

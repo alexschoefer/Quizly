@@ -13,12 +13,30 @@ class Quiz(models.Model):
     - updated_at: DateTimeField to store the last update timestamp of the quiz.
     - video_url: URLField to optionally store a related video URL for the quiz.
     """
+
+    class Status(models.TextChoices):
+        """
+        Enumeration for the status of the quiz processing.
+        Values:
+        - PROCESSING: Indicates that the quiz is currently being processed.
+        - DONE: Indicates that the quiz has been successfully processed.
+        - FAILED: Indicates that there was an error during the processing of the quiz.
+        """
+        PROCESSING = "processing", "Processing"
+        DONE = "done", "Done"
+        FAILED = "failed", "Failed"
+
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='quizzes')
     title = models.CharField(max_length=255)
     description = models.TextField()
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     video_url = models.URLField(blank=True, null=True)
+    status = models.CharField(  
+        max_length=20,
+        choices=Status.choices,
+        default=Status.PROCESSING
+    )
 
     def __str__(self):
         """String representation of the Quiz model, returning the title of the quiz."""

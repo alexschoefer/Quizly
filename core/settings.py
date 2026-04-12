@@ -12,6 +12,10 @@ https://docs.djangoproject.com/en/6.0/ref/settings/
 
 from pathlib import Path
 from datetime import timedelta
+from dotenv import load_dotenv
+import os
+
+load_dotenv()
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -119,9 +123,8 @@ USE_I18N = True
 USE_TZ = True
 
 REST_FRAMEWORK = {
-
     'DEFAULT_AUTHENTICATION_CLASSES': (
-        'rest_framework_simplejwt.authentication.JWTAuthentication',
+        'auth_app.api.authentication.CookieJWTAuthentication',
     )
 }
 
@@ -142,4 +145,5 @@ SIMPLE_JWT = {
 
 STATIC_URL = 'static/'
 
-
+"""Default primary key field type"""
+GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")

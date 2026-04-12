@@ -22,6 +22,6 @@ class QuizSerializer(serializers.ModelSerializer):
         fields = ['id', 'title', 'description', 'created_at', 'updated_at', 'video_url', 'questions']
         read_only_fields = ['created_at', 'updated_at']
 
-class CreateQuizSerializer(serializers.ModelSerializer):
+class CreateQuizSerializer(serializers.Serializer):
 
     url = serializers.URLField(required=False, allow_blank=True)
