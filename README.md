@@ -309,4 +309,4 @@ Please open an issue or submit a pull request.
 
 <h2>📄 License</h2>
 
-<p>MIT License</p>
+<p>MIT License © alexschoefer</p>
