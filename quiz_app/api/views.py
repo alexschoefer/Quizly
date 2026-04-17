@@ -11,6 +11,8 @@ from quiz_app.services.quiz_gemini_service import generate_quiz_from_transcript,
 from celery import shared_task
 from django.core.exceptions import ObjectDoesNotExist
 import os
+from django.shortcuts import get_object_or_404
+from rest_framework.exceptions import PermissionDenied
 
     # @shared_task
     # def process_create_quiz_audio(quiz_id):
@@ -187,12 +189,12 @@ class QuizDetailView(generics.RetrieveUpdateDestroyAPIView):
         """
         Override the default get_object method to ensure that only the owner of the quiz can access or modify it.
         """
-        quiz = generics.get_object_or_404(Quiz, id=self.kwargs['pk'], user=self.request.user)
+        quiz = generics.get_object_or_404(Quiz, id=self.kwargs['pk'])
         if quiz.user != self.request.user:
             if self.request.method == 'GET':
-                raise serializers.ValidationError("You do not have permission to view this quiz.")
+                raise PermissionDenied("You do not have permission to access this quiz.")
             else:
-                raise serializers.ValidationError("You do not have permission to modify this quiz.")
+                raise PermissionDenied("You do not have permission to modify this quiz.")
         return quiz
     
     def get_serializer_class(self):

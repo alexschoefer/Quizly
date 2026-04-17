@@ -9,7 +9,7 @@ class IsOwnerOfTheQuiz(BasePermission):
         """"
         Check if the user making the request is the owner of the quiz object.
         """
-        return obj.owner == request.user
+        return obj.user == request.user
     
     def has_permission(self, request, view):
         """
