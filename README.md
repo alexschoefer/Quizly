@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Quizly Backend Documentation</title>
+<title>Quizly API Documentation</title>
 
 <style>
 
@@ -71,6 +71,14 @@ font-size: 12px;
 margin-right: 8px;
 }
 
+.warning {
+background: #3f1d1d;
+border-left: 4px solid #ef4444;
+padding: 16px;
+margin-top: 20px;
+border-radius: 8px;
+}
+
 .footer {
 text-align:center;
 margin-top:60px;
@@ -85,57 +93,61 @@ opacity:0.6;
 
 <div class="container">
 
-<h1>🧠 Quizly Backend</h1>
+<h1>📘 Quizly API</h1>
 
 <p>
-Quizly is an AI-powered backend that generates quizzes from YouTube videos.
-The system extracts transcripts, processes them using AI, and returns structured quiz questions.
+Quizly is an AI-driven backend service that converts YouTube videos into interactive quizzes.
+The system downloads video audio, performs speech-to-text transcription, and generates
+structured quiz questions using modern AI models.
 </p>
 
-
-<h2>🚀 Features</h2>
+<h2>🚀 Core Features</h2>
 
 <div class="card">
 
 <ul>
 <li>🎥 YouTube Video Processing</li>
-<li>🤖 AI Quiz Generation</li>
-<li>🔐 Authentication</li>
-<li>📊 Quiz API</li>
-<li>⚡ Scalable Architecture</li>
-<li>🔄 Redis Support</li>
+<li>🎙 Speech-to-Text Transcription</li>
+<li>🤖 AI Question Generation</li>
+<li>🔐 Secure Authentication</li>
+<li>📊 Quiz CRUD API</li>
+<li>⚡ Modular Django Architecture</li>
+
 </ul>
 
 </div>
 
 
-<h2>🏗️ Projektstruktur</h2>
+<h2>🏗 Project Structure</h2>
 
 <pre>
 
-Quizly/
-│
-├── auth_app/
-│   ├── models.py
-│   ├── views.py
-│   ├── serializers.py
-│   ├── urls.py
-│
-├── quiz_app/
-│   ├── models.py
-│   ├── views.py
-│   ├── serializers.py
-│   ├── services/
-│   │    ├── ai_service.py
-│   │    ├── youtube_service.py
-│   │
-│   └── urls.py
+quiz_project/
 │
 ├── core/
 │   ├── settings.py
 │   ├── urls.py
-│   ├── asgi.py
-│   └── wsgi.py
+│   ├── wsgi.py
+│   └── asgi.py
+│
+├── quiz_app/
+│   ├── api/
+│   │   ├── views.py
+│   │   ├── serializers.py
+│   │   ├── urls.py
+│   │   ├── permissions.py
+│   │   └── helpers.py
+│   │
+│   ├── models.py
+│   └── authentication.py
+│
+├── auth_app/
+│   ├── api/
+│   │   ├── views.py
+│   │   ├── serializers.py
+│   │   └── urls.py
+│   │
+│   └── models.py
 │
 ├── manage.py
 ├── requirements.txt
@@ -144,19 +156,53 @@ Quizly/
 </pre>
 
 
-<h2>🧰 Tech Stack</h2>
+<h2>⚙️ Requirements</h2>
 
 <div class="card">
 
 <ul>
-<li>Django</li>
-<li>Django REST Framework</li>
-<li>OpenAI API</li>
-<li>YouTube API</li>
-<li>Redis</li>
-<li>PostgreSQL</li>
-<li>Docker</li>
+<li>Python 3.10+</li>
+<li>pip</li>
+<li>virtualenv</li>
+<li>FFmpeg (Required)</li>
+
 </ul>
+
+</div>
+
+
+<h2>⚠️ Important: Install FFmpeg</h2>
+
+<div class="warning">
+
+<p>
+FFmpeg is mandatory for processing audio streams and extracting audio from YouTube videos.
+Without FFmpeg the transcription pipeline will fail.
+</p>
+
+<ol>
+
+<li>Download FFmpeg</li>
+
+<pre>
+https://ffmpeg.org/download.html
+</pre>
+
+<li>Extract the archive</li>
+
+<li>Add <strong>bin</strong> folder to system PATH</li>
+
+<li>Verify installation</li>
+
+<pre>
+ffmpeg -version
+</pre>
+
+</ol>
+
+<p>
+If FFmpeg is not installed correctly, audio extraction and transcription will not work.
+</p>
 
 </div>
 
@@ -165,37 +211,63 @@ Quizly/
 
 <pre>
 
-git clone https://github.com/alexschoefer/Quizly.git
+git clone repository_url
 
-cd Quizly
+cd repository
 
-python -m venv venv
+python -m venv env
 
-source venv/bin/activate
+</pre>
+
+Activate Virtual Environment
+
+Windows
+
+<pre>
+
+env\Scripts\activate
+
+</pre>
+
+Linux / macOS
+
+<pre>
+
+source env/bin/activate
+
+</pre>
+
+
+Install dependencies
+
+<pre>
 
 pip install -r requirements.txt
 
 </pre>
 
 
-<h2>Environment Variables</h2>
+<h2>🌱 Environment Variables</h2>
 
 <pre>
 
-SECRET_KEY=
+DJANGO_SECRET_KEY=
 
-DEBUG=True
-
-OPENAI_API_KEY=
-
-YOUTUBE_API_KEY=
-
-REDIS_URL=redis://localhost:6379
+GEMINI_API_KEY=
 
 </pre>
 
 
-<h2>🚀 Start Server</h2>
+Create .env
+
+<pre>
+
+cp .env.example .env
+
+</pre>
+
+
+<h2>🚀 Run Server</h2>
 
 <pre>
 
@@ -208,17 +280,20 @@ python manage.py runserver
 
 <h2>🔐 Authentication Endpoints</h2>
 
+
 <div class="endpoint">
 
 <span class="badge">POST</span>
 
-<strong>/api/auth/register/</strong>
+<strong>/api/register/</strong>
 
 <pre>
 
 {
-"email": "user@test.com",
-"password": "password"
+"username": "username",
+"password": "password",
+"confirmed_password": "password",
+"email": "user@email.com"
 }
 
 </pre>
@@ -230,25 +305,25 @@ python manage.py runserver
 
 <span class="badge">POST</span>
 
-<strong>/api/auth/login/</strong>
-
-<pre>
-
-{
-"email": "user@test.com",
-"password": "password"
-}
-
-</pre>
+<strong>/api/login/</strong>
 
 </div>
 
 
 <div class="endpoint">
 
-<span class="badge">GET</span>
+<span class="badge">POST</span>
 
-<strong>/api/auth/profile/</strong>
+<strong>/api/logout/</strong>
+
+</div>
+
+
+<div class="endpoint">
+
+<span class="badge">POST</span>
+
+<strong>/api/token/refresh/</strong>
 
 </div>
 
@@ -256,17 +331,17 @@ python manage.py runserver
 
 <h2>🎥 Quiz Endpoints</h2>
 
+
 <div class="endpoint">
 
 <span class="badge">POST</span>
 
-<strong>/api/quiz/generate/</strong>
+<strong>/api/createQuiz/</strong>
 
 <pre>
 
 {
-"youtube_url": "https://youtube.com/watch?v=..."
-
+"url":"https://youtube.com/..."
 }
 
 </pre>
@@ -278,57 +353,59 @@ python manage.py runserver
 
 <span class="badge">GET</span>
 
-<strong>/api/quiz/{id}/</strong>
+<strong>/api/quizzes/</strong>
 
 </div>
-
-
-<div class="endpoint">
-
-<span class="badge">POST</span>
-
-<strong>/api/quiz/{id}/submit/</strong>
-
-<pre>
-
-{
-"answers":[1,2,3]
-
-}
-
-</pre>
-
-</div>
-
 
 
 <div class="endpoint">
 
 <span class="badge">GET</span>
 
-<strong>/api/quiz/my/</strong>
+<strong>/api/quizzes/{id}/</strong>
 
 </div>
 
+
+<div class="endpoint">
+
+<span class="badge">PATCH</span>
+
+<strong>/api/quizzes/{id}/</strong>
+
+</div>
+
+
+<div class="endpoint">
+
+<span class="badge">DELETE</span>
+
+<strong>/api/quizzes/{id}/</strong>
+
+</div>
 
 
 <h2>🧠 Processing Flow</h2>
 
 <pre>
 
-YouTube Video
+YouTube URL
 
 ↓
 
-Transcript Extraction
+Video Download (yt-dlp)
 
 ↓
 
-AI Processing
+Audio Extraction (FFmpeg)
 
 ↓
 
-Quiz Generation
+Speech-to-Text (Whisper)
+
+↓
+
+AI Question Generation (Gemini)
 
 ↓
 
@@ -341,66 +418,58 @@ API Response
 </pre>
 
 
-<h2>📦 Requirements</h2>
+<h2>📦 Key Technologies</h2>
 
 <div class="card">
 
 <ul>
-<li>Python 3.10+</li>
-<li>Redis</li>
-<li>OpenAI API Key</li>
-<li>YouTube API Key</li>
+
+<li>Django</li>
+
+<li>Django REST Framework</li>
+
+<li>SimpleJWT</li>
+
+<li>yt-dlp</li>
+
+<li>Whisper</li>
+
+<li>Google Gemini API</li>
+
+<li>FFmpeg</li>
+
 </ul>
 
 </div>
 
 
-<h2>🐳 Docker</h2>
+<h2>Error Codes</h2>
 
 <pre>
 
-docker build -t quizly .
+200 Success
 
-docker run -p 8000:8000 quizly
+201 Created
+
+204 Deleted
+
+400 Bad Request
+
+401 Unauthorized
+
+403 Forbidden
+
+404 Not Found
+
+500 Server Error
 
 </pre>
 
 
 
-<h2>🚀 Deployment</h2>
-
-<div class="card">
-
-<ul>
-<li>AWS</li>
-<li>Railway</li>
-<li>Render</li>
-<li>Docker VPS</li>
-</ul>
-
-</div>
-
-
-
-<h2>📈 Future Features</h2>
-
-<ul>
-
-<li>Realtime Quiz</li>
-
-<li>Multiplayer Quiz</li>
-
-<li>Analytics Dashboard</li>
-
-<li>Mobile API</li>
-
-</ul>
-
-
-
 <div class="footer">
 
-Quizly Backend • AI Quiz Generator
+Quizly API Documentation
 
 </div>
 
