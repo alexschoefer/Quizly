@@ -14,61 +14,6 @@ import os
 from django.shortcuts import get_object_or_404
 from rest_framework.exceptions import PermissionDenied
 
-    # @shared_task
-    # def process_create_quiz_audio(quiz_id):
-    #     quiz = Quiz.objects.get(id=quiz_id)
-    #     process_quiz(quiz)
-
-    ### DEBUG CODE ####
-
-    # def process_create_quiz_audio(quiz_id):
-    #     """
-    #     Asynchronous task to process the audio of a quiz's YouTube video, transcribe it, and update the quiz with the transcript and status.
-    #     """
-    #     print("TASK STARTED") 
-    #     try:
-    #         quiz = Quiz.objects.get(id=quiz_id)
-    #     except ObjectDoesNotExist:
-    #         return
-
-    #     audio_path = None
-
-    #     try:
-    #         audio_path = download_audio(quiz.video_url)
-    #         print("DOWNLOADED AUDIO")
-    #         transcript = transcribe_audio(audio_path)
-    #         print("TRANSCRIBED")
-    #         quiz_data = generate_quiz_from_transcript(transcript)
-    #         print("GEMINI DONE")
-    #         validate_quiz_data(quiz_data)
-    #         quiz.title = quiz_data["title"]
-    #         quiz.description = quiz_data["description"]
-    #         quiz.transcript = transcript
-    #         quiz.status = "done"
-    #         quiz.save()
-
-    #         questions = [
-    #             Question(
-    #                 quiz=quiz,
-    #                 question_title=q["question_title"],
-    #                 question_options=q["question_options"],
-    #                 answer=q["answer"],
-    #             )
-    #             for q in quiz_data["questions"]
-    #         ]
-
-    #         Question.objects.bulk_create(questions)
-
-    #     except Exception as e:
-    #         print("ERROR:", str(e))
-    #         quiz.status = "failed"
-    #         quiz.transcript = str(e)
-
-    #     finally:
-    #         quiz.save()
-
-    #         if audio_path and os.path.exists(audio_path):
-    #             os.remove(audio_path)
 
 class QuizListCreateView(generics.ListCreateAPIView):
     """
@@ -90,27 +35,6 @@ class QuizListCreateView(generics.ListCreateAPIView):
         """
         return Quiz.objects.filter(user=self.request.user)
     
-    # def perform_create(self, serializer):
-    #     """
-    #     Override the default create behavior to handle YouTube video URL normalization and quiz creation.
-    #     process_create_quiz_audio is called asynchronously to handle the audio processing after the quiz is created.
-    #     """
-    #     video_url = serializer.validated_data.get('url')
-
-    #     if video_url:
-    #         normalized_url = normalize_youtube_url(video_url)
-
-    #         quiz = Quiz.objects.create(
-    #             user=self.request.user,
-    #             video_url=normalized_url,
-    #             status="processing"
-    #         )
-
-    #         process_create_quiz_audio.delay(quiz.id)
-
-    #     else:
-    #         serializer.save(user=self.request.user)
-
     def create(self, request, *args, **kwargs):
         """
         Override the default create method to handle YouTube video URL normalization and quiz creation. 
@@ -214,4 +138,3 @@ class QuizDetailView(generics.RetrieveUpdateDestroyAPIView):
         serializer.is_valid(raise_exception=True)
         serializer.save()
         return Response(QuizSerializer(quiz).data, status=status.HTTP_200_OK)
-

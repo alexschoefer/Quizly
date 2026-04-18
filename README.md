@@ -1,29 +1,24 @@
-<h1>📘 Quizly API</h1>
+# 📘 Quizly API
 
-<p>
 Quizly is an AI-powered backend that converts YouTube videos into interactive quizzes.
-The system downloads videos, extracts audio, transcribes speech, and generates
-structured quiz questions using AI.
-</p>
+The system downloads videos, extracts audio, transcribes speech, and generates structured quiz questions using AI.
 
-<hr>
+---
 
-<h2>🚀 Features</h2>
+# 🚀 Features
 
-<ul>
-<li>🎥 YouTube Video Processing</li>
-<li>🎙 Speech-to-Text Transcription</li>
-<li>🤖 AI Question Generation</li>
-<li>🔐 Authentication System</li>
-<li>📊 Quiz CRUD API</li>
-<li>⚡ Modular Django Architecture</li>
-</ul>
+* 🎥 YouTube Video Processing
+* 🎙 Speech-to-Text Transcription
+* 🤖 AI Question Generation
+* 🔐 Authentication System
+* 📊 Quiz CRUD API
+* ⚡ Modular Django Architecture
 
-<hr>
+---
 
-<h2>🏗 Project Structure</h2>
+# 🏗 Project Structure
 
-<pre>
+```
 quiz_project/
 │
 ├── core/
@@ -54,169 +49,188 @@ quiz_project/
 ├── manage.py
 ├── requirements.txt
 └── .env
-</pre>
+```
 
-<hr>
+---
 
-<h2>⚙️ Requirements</h2>
+# ⚙️ Requirements
 
-<ul>
-<li>Python 3.10+</li>
-<li>pip</li>
-<li>virtualenv</li>
-<li>FFmpeg (Required)</li>
-</ul>
+* Python 3.10+
+* pip
+* virtualenv
+* FFmpeg (Required)
 
-<hr>
+---
 
-<h2>⚠️ Important: Install FFmpeg</h2>
+# ⚠️ Important: Install FFmpeg
 
-<p>
 FFmpeg is required for extracting audio from YouTube videos and running transcription.
 Without FFmpeg, quiz generation will fail.
-</p>
 
-<h3>Install FFmpeg</h3>
+## Install FFmpeg
 
-<p>Download FFmpeg:</p>
+Download FFmpeg:
 
-<pre>
+```
 https://ffmpeg.org/download.html
-</pre>
+```
 
-<p>Verify installation:</p>
+Verify installation:
 
-<pre>
+```
 ffmpeg -version
-</pre>
+```
 
-<p>
 If installed correctly, version information will be displayed.
-</p>
 
-<hr>
+---
 
-<h2>⚙️ Installation</h2>
+# ⚙️ Installation
 
-<h3>Clone Repository</h3>
+## Clone Repository
 
-<pre>
+```
 git clone repository_url
 cd Quizly
-</pre>
+```
 
-<h3>Create Virtual Environment</h3>
+## Create Virtual Environment
 
-<p>Windows:</p>
+### Windows
 
-<pre>
+```
 python -m venv env
 env\Scripts\activate
-</pre>
+```
 
-<p>Linux / macOS:</p>
+### Linux / macOS
 
-<pre>
+```
 python3 -m venv env
 source env/bin/activate
-</pre>
+```
 
-<h3>Install Dependencies</h3>
+## Install Dependencies
 
-<pre>
+```
 pip install -r requirements.txt
-</pre>
+```
 
-<hr>
+---
 
-<h2>🌱 Environment Variables</h2>
+# 🌱 Environment Variables
 
-<p>Create a <code>.env</code> file:</p>
+Create a `.env` file:
 
-<pre>
+```
 cp .env.example .env
-</pre>
+```
 
-<p>Example:</p>
+Example:
 
-<pre>
-DJANGO_SECRET_KEY=
-GEMINI_API_KEY=
-</pre>
+```
+GEMINI_API_KEY=your_gemini_api_key_here
+```
 
-<hr>
+---
 
-<h2>🚀 Run Server</h2>
+# 🚀 Run Server
 
-<pre>
+```
 python manage.py migrate
 python manage.py runserver
-</pre>
+```
 
-<hr>
+---
 
-<h2>🔐 Authentication Endpoints</h2>
+## Creating a Superuser
 
-<h3>Register</h3>
+To access admin features or perform administrative tasks, create a superuser account:
 
-<p><code>POST /api/register/</code></p>
+1. Run `python manage.py createsuperuser`
+2. Follow the prompts to enter a username, email, and password.
+3. Use the superuser credentials to log in via the Django admin panel at `http://127.0.0.1:8000/admin/` or for API authentication.
 
-<pre>
+This is useful for testing permissions, managing users, and accessing protected endpoints.
+
+---
+
+# 🔐 Authentication Endpoints
+
+## Register
+
+`POST /api/register/`
+
+```json
 {
-"username": "username",
-"password": "password",
-"confirmed_password": "password",
-"email": "email@example.com"
+  "username": "username",
+  "password": "password",
+  "confirmed_password": "password",
+  "email": "email@example.com"
 }
-</pre>
+```
 
-<h3>Login</h3>
+---
 
-<p><code>POST /api/login/</code></p>
+## Login
 
-<h3>Logout</h3>
+`POST /api/login/`
 
-<p><code>POST /api/logout/</code></p>
+---
 
-<h3>Refresh Token</h3>
+## Logout
 
-<p><code>POST /api/token/refresh/</code></p>
+`POST /api/logout/`
 
-<hr>
+---
 
-<h2>🎥 Quiz Endpoints</h2>
+## Refresh Token
 
-<h3>Create Quiz</h3>
+`POST /api/token/refresh/`
 
-<p><code>POST /api/createQuiz/</code></p>
+---
 
-<pre>
+# 🎥 Quiz Endpoints
+
+## Create Quiz
+
+`POST /api/createQuiz/`
+
+```json
 {
 "url": "https://youtube.com/..."
 }
-</pre>
+```
 
-<h3>Get All Quizzes</h3>
+---
 
-<p><code>GET /api/quizzes/</code></p>
+## Get All Quizzes
 
-<h3>Get Quiz</h3>
+`GET /api/quizzes/`
 
-<p><code>GET /api/quizzes/{id}/</code></p>
+---
 
-<h3>Update Quiz</h3>
+## Get Quiz
 
-<p><code>PATCH /api/quizzes/{id}/</code></p>
+`GET /api/quizzes/{id}/`
 
-<h3>Delete Quiz</h3>
+---
 
-<p><code>DELETE /api/quizzes/{id}/</code></p>
+## Update Quiz
 
-<hr>
+`PATCH /api/quizzes/{id}/`
 
-<h2>🧠 Processing Flow</h2>
+---
 
-<pre>
+## Delete Quiz
+
+`DELETE /api/quizzes/{id}/`
+
+---
+
+# 🧠 Processing Flow
+
+```
 YouTube URL
      ↓
 Video Download (yt-dlp)
@@ -228,85 +242,44 @@ Speech-to-Text (Whisper)
 AI Question Generation (Gemini)
      ↓
 Quiz Storage
-</pre>
+```
 
-<hr>
+---
 
-<h2>📦 Key Technologies</h2>
+# 📦 Key Technologies
 
-<ul>
-<li>Django</li>
-<li>Django REST Framework</li>
-<li>SimpleJWT</li>
-<li>yt-dlp</li>
-<li>Whisper</li>
-<li>Google Gemini</li>
-<li>FFmpeg</li>
-</ul>
+* Django
+* Django REST Framework
+* SimpleJWT
+* yt-dlp
+* Whisper
+* Google Gemini
+* FFmpeg
 
-<hr>
+---
 
-<h2>Error Codes</h2>
+# Error Codes
 
-<table>
-<tr>
-<th>Code</th>
-<th>Description</th>
-</tr>
+| Code | Description  |
+| ---- | ------------ |
+| 200  | Success      |
+| 201  | Created      |
+| 204  | Deleted      |
+| 400  | Bad Request  |
+| 401  | Unauthorized |
+| 403  | Forbidden    |
+| 404  | Not Found    |
+| 500  | Server Error |
 
-<tr>
-<td>200</td>
-<td>Success</td>
-</tr>
+---
 
-<tr>
-<td>201</td>
-<td>Created</td>
-</tr>
+# 🤝 Contributing
 
-<tr>
-<td>204</td>
-<td>Deleted</td>
-</tr>
-
-<tr>
-<td>400</td>
-<td>Bad Request</td>
-</tr>
-
-<tr>
-<td>401</td>
-<td>Unauthorized</td>
-</tr>
-
-<tr>
-<td>403</td>
-<td>Forbidden</td>
-</tr>
-
-<tr>
-<td>404</td>
-<td>Not Found</td>
-</tr>
-
-<tr>
-<td>500</td>
-<td>Server Error</td>
-</tr>
-
-</table>
-
-<hr>
-
-<h2>🤝 Contributing</h2>
-
-<p>
-Contributions are welcome.  
+Contributions are welcome.
 Please open an issue or submit a pull request.
-</p>
 
-<hr>
+---
 
-<h2>📄 License</h2>
+# 📄 License
 
-<p>MIT License © alexschoefer</p>
+MIT License © alexschoefer
