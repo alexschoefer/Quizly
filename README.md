@@ -130,7 +130,7 @@ Example:
 
 ```
 GEMINI_API_KEY=your_gemini_api_key_here
-DJANGO_SECRET_KEY=your-secret_django-key
+DJANGO_SECRET_KEY=your_secret_django_key_here
 ```
 
 ---
